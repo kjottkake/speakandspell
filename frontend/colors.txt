@@ -1,0 +1,3 @@
+light-gray: some button text
+pygblue: buttons
+gray-50: card background
