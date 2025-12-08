@@ -27,9 +27,9 @@ export default function Header() {
       <AppBar position="static" className="bg-inherit text-pygblue shadow-md ">
         <Container maxWidth="xl" > 
           <Toolbar className="flex justify-between items-center">
-            <Link to={"/home"} className='flex flex-col items-center py-2'>
+            <Link to={"/"} className='flex flex-col items-center py-2'>
             <Typography variant="h5" component="div" className="grow font-bold tracking-wide">
-              SkandinaviskAppen
+              Speak and Spell Test
             </Typography>
             </Link>
             <Box className="flex items-center gap-2">
