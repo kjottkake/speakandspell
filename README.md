@@ -1,6 +1,6 @@
 # Speak and Spell
 
-A web application to learn the scandinavian languages.
+A web application that allows users to learn the differences between Swedish, Norwegian, and Danish. 
 
 ## Installation
 
