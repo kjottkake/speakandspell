@@ -74,6 +74,18 @@ Example response
 
 What the endpoint does
 
+## DB Naming Convention
+
+bins = 
+
+exercises = 
+
+rules = 
+
+trials = 
+
+words = 
+
 
 
 ## Translation

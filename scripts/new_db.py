@@ -43,6 +43,7 @@ def read_rule(rule: str):
         start += 1
     return rule[start:]
 
+# name of file will change <- Jason 
 words_df = pd.read_excel("Localisation word material_example.xlsx", sheet_name="Sheet1", header=1)
 for column in words_df.columns:
     if "Unnamed" in column:
