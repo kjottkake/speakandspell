@@ -1,3 +1,7 @@
+# Notes 14 Jan 26
+# Trying to figure out what this script does, I believe it populates the database based on two excel files
+# the first excel file is called "Localisation word material_example.xlsx"
+# the second excel file is called "Localisation rules_example.xlsx "
 import pandas as pd
 from pymongo import MongoClient
 from dotenv import load_dotenv
@@ -44,13 +48,17 @@ def read_rule(rule: str):
     return rule[start:]
 
 # name of file will change <- Jason 
-words_df = pd.read_excel("Localisation word material_example.xlsx", sheet_name="Sheet1", header=1)
+#words_df = pd.read_excel("Localisation word material_example.xlsx", sheet_name="Sheet1", header=1)
+
+#this code block will read in the excel sheet and convert the header row into strings
+words_df = pd.read_excel("localizationfile.xlsx", sheet_name="L2S-C Swedish", header=1)
 for column in words_df.columns:
-    if "Unnamed" in column:
+    if "Unnamed" in str(column): #converts the row data into strings
         words_df.drop(column, axis=1, inplace=True)
 words_df.dropna(how="all", inplace=True)
 
-word_wb = load_workbook("Localisation word material_example.xlsx")
+#word_wb = load_workbook("Localisation word material_example.xlsx")
+word_wb = load_workbook("localizationfile.xlsx")
 word_ws = word_wb.active
 for i, (_, row) in enumerate(words_df.iterrows()):
     word = {"_id": i}
