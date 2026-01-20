@@ -2,6 +2,8 @@
 # Trying to figure out what this script does, I believe it populates the database based on two excel files
 # the first excel file is called "Localisation word material_example.xlsx"
 # the second excel file is called "Localisation rules_example.xlsx "
+# Notes 15 Jan 26
+# Currently the script reads the excel sheet in and reads all columns, however 
 import pandas as pd
 from pymongo import MongoClient
 from dotenv import load_dotenv
@@ -51,14 +53,19 @@ def read_rule(rule: str):
 #words_df = pd.read_excel("Localisation word material_example.xlsx", sheet_name="Sheet1", header=1)
 
 #this code block will read in the excel sheet and convert the header row into strings
-words_df = pd.read_excel("localizationfile.xlsx", sheet_name="L2S-C Swedish", header=1)
+#this also needs to read from exercises "MASTER" file
+# words_df = pd.read_excel("localizationfile.xlsx", sheet_name="L2S-C Swedish", header=1)
+words_df = pd.read_excel("Localisation word material_example.xlsx", sheet_name="Sheet1", header=1)
 for column in words_df.columns:
     if "Unnamed" in str(column): #converts the row data into strings
         words_df.drop(column, axis=1, inplace=True)
+# print("COLUMNS:", list(words_df.columns)) #trouble_shoot testing to see what columns are being read
+# print("COLUMNS AFTER CLEANUP:", list(words_df.columns)) #trouble_shoot test
 words_df.dropna(how="all", inplace=True)
 
-#word_wb = load_workbook("Localisation word material_example.xlsx")
-word_wb = load_workbook("localizationfile.xlsx")
+#needs to read from Exercises "Master File" 16Jan26
+word_wb = load_workbook("Localisation word material_example.xlsx")
+# word_wb = load_workbook("localizationfile.xlsx")
 word_ws = word_wb.active
 for i, (_, row) in enumerate(words_df.iterrows()):
     word = {"_id": i}
@@ -77,6 +84,7 @@ for i, (_, row) in enumerate(words_df.iterrows()):
         }
     words.append(word)
 
+#this will read from "rules" or "localization" file
 rules_df = pd.read_excel("Localisation rules_example.xlsx", sheet_name="Sheet1", header=0)
 for column in rules_df.columns:
     if "Unnamed" in column:
@@ -98,8 +106,10 @@ for lang in ["norwegian", "swedish", "danish"]:
         ["L2S-V", True, False],
         ["S2L-C", False, True],
         ["S2L-V", False, False]
-    ]:
+    ]: 
+        #this will also need to read in from exercises file
         df = pd.read_excel("Exercises_2025-07-18.xlsx", sheet_name=f"{x[0]} {lang.capitalize()}", header=1)
+        # df = pd.read_excel("exercises.xlsx", sheet_name=f"{x[0]} {lang.capitalize()}", header=1)
         for column in df.columns:
             if "Unnamed" in column:
                 df.drop(column, axis=1, inplace=True)
