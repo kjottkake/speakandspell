@@ -21,7 +21,7 @@ export default function FlagCards({handleSelectLanguage}) {
               >
                 <span className={`${language.flagClass} text-6xl h-full`}></span>
               </Button>
-              <p className={`${l2.name == language.name ? "text-pygblue" : "text-gray-600"}`}>{(language.code).toUpperCase()}</p>
+              <p className={`${l2.name == language.name ? "text-pygblue" : "text-gray-600"}`}>{(language.code).toUpperCase()}</p>  {/* Button to go to Exercise*/}
             </Box>
             // end of flag and language wrapper
         ))}

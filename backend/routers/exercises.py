@@ -7,7 +7,8 @@ from common import connection_err, lang_error
 from pydantic import BaseModel
 
 NUM_EXAMPLES = 2
-NUM_TRIALS = 20
+# NUM_TRIALS = 20
+NUM_TRIALS = 1 #when num trials is 1 then all of the "trials" gets displayed
 
 router = APIRouter()
 auth_handler = AuthHandler()
@@ -26,34 +27,99 @@ def remove_nan(x):
         return {k: remove_nan(y) for k, y in x.items()}
     return x
 
+# @router.get("/exercise-list/{l2}/{consonant}")
+# async def exercise_list(request: Request, l2: str, consonant: bool):
+#     err = lang_error(l2)
+#     if err:
+#         raise err
+#     err = await connection_err(request)
+#     if err:
+#         raise err
+#     db = request.app.mongodb
+#     exercises = await db["exercises"].find({"language": l2, "is_consonant": consonant}).to_list(length=None)
+#     json_exercises = {
+#         "speak": [],
+#         "spell": []
+#     }
+
+#     trial_count = 0
+#     for exercise in exercises:
+#         bins = await db["bins"].find({"exercise": exercise["_id"]}, {"_id": True}).to_list(length=None)
+#         if bins == []:
+#             continue
+#         trial_count = 0
+#         for bin in bins:
+#             trial_count += await db["trials"].count_documents({"bin": bin["_id"]})
+            
+#         if trial_count >= NUM_TRIALS:
+#             json_exercises["speak" if exercise["is_speak"] else "spell"].append({"id": exercise["_id"], "target": exercise["target"]})
+                
+#     return JSONResponse(content={"exercises": remove_nan(json_exercises)})
+
+
 @router.get("/exercise-list/{l2}/{consonant}")
 async def exercise_list(request: Request, l2: str, consonant: bool):
     err = lang_error(l2)
     if err:
         raise err
+
     err = await connection_err(request)
     if err:
         raise err
+
     db = request.app.mongodb
-    exercises = await db["exercises"].find({"language": l2, "is_consonant": consonant}).to_list(length=None)
+
+    exercises = await db["exercises"].find(
+        {"language": l2, "is_consonant": consonant}
+    ).to_list(length=None)
+
+    print("=== EXERCISE DEBUG ===")
+    print("Matched exercises from DB:", len(exercises))
+
     json_exercises = {
         "speak": [],
         "spell": []
     }
 
-    trial_count = 0
+    kept = 0
+    skipped_no_bins = 0
+    skipped_low_trials = 0
+
     for exercise in exercises:
-        bins = await db["bins"].find({"exercise": exercise["_id"]}, {"_id": True}).to_list(length=None)
-        if bins == []:
+        bins = await db["bins"].find(
+            {"exercise": exercise["_id"]},
+            {"_id": True}
+        ).to_list(length=None)
+
+        if not bins:
+            skipped_no_bins += 1
             continue
+
         trial_count = 0
         for bin in bins:
-            trial_count += await db["trials"].count_documents({"bin": bin["_id"]})
-            
+            count = await db["trials"].count_documents({"bin": bin["_id"]})
+            trial_count += count
+
         if trial_count >= NUM_TRIALS:
-            json_exercises["speak" if exercise["is_speak"] else "spell"].append({"id": exercise["_id"], "target": exercise["target"]})
-                
-    return JSONResponse(content={"exercises": remove_nan(json_exercises)})
+            kept += 1
+            json_exercises[
+                "speak" if exercise["is_speak"] else "spell"
+            ].append({
+                "id": exercise["_id"],
+                "target": exercise["target"]
+            })
+        else:
+            skipped_low_trials += 1
+
+    print("Kept:", kept)
+    print("Skipped (no bins):", skipped_no_bins)
+    print("Skipped (low trials):", skipped_low_trials)
+    print("======================")
+
+    return JSONResponse(
+        content={"exercises": remove_nan(json_exercises)}
+    )
+
 
 @router.get("/exercise/{id}")
 async def get_exercise(request: Request, id: int):

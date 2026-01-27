@@ -36,6 +36,13 @@ export const ExerciseProvider = ({children}) => {
         if (response.ok) {
             const data = await response.json();
             setExercises(data.exercises);
+            //testing to see what is being retrieved
+            console.log("RAW /exercise-list response:", data);
+            console.log("data.exercises type:", typeof data.exercises, Array.isArray(data.exercises));
+            console.log("data.exercises keys:", data.exercises && Object.keys(data.exercises));
+            console.log("data.exercises.speak length:", data.exercises?.speak?.length);
+            console.log("data.exercises.spell length:", data.exercises?.spell?.length);
+
         } else {
             throw new Error(`Error fetching exercises: ${response.statusText}`);
         }

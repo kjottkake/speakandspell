@@ -61,17 +61,31 @@ export default function Home() {
         <Container maxWidth="md" className="flex justify-center py-10 px-20 gap-1 rounded-xl border-2 border-pygblue relative">        
           {
             Object.keys(exercises).map((exerciseType, idx) => {
+              const list = exercises[exerciseType];
+
+                // console.log(
+                // "Exercise type:", exerciseType,
+                // "| isArray:", Array.isArray(list),
+                // "| length:", list?.length,
+                // "| value:", list
+                // );
+
+                console.log("exercises object:", exercises);
+                console.log("exercise keys:", Object.keys(exercises));
+                console.log("number of exercise types:", Object.keys(exercises).length);
+
               return <Stack direction="column" className="flex flex-1 flex-col items-center relative h-60" key={idx}>
 
                 <span className="text-pygblue border-2 rounded-md py-1 px-6 border-pygblue z-10 bg-white absolute -top-14">
                   {t(exerciseType.toUpperCase())}
                 </span>
-
+                {/* Exercise list that will be displayed */}
                 <ExerciseList exercises={exercises[exerciseType]} type={exerciseType} handleSelectExercise={handleSelectExercise} hideProgress={auth.token === 'guest'} results={results} loading={loading}/>
-
               </Stack>
             })
           }
+
+          
           <Button className="text-white rounded-md py-1.5 px-20 z-10 bg-pygblue absolute -bottom-5 shadow-md" onClick={() => {setIsConsonant(!isConsonant)}}>{isConsonant ? t("GO TO VOWELS") : t("GO TO CONSONANTS")}</Button>
         </Container>
       </Box>

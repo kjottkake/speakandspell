@@ -14,7 +14,7 @@ load_dotenv()
 
 DB_URL = os.getenv("DB_URL")
 client = MongoClient(DB_URL)
-db = client["speaknspell"]
+db = client["speaknspell2026"]
 
 trial_collection = db["trials"]
 bin_collection = db["bins"]
